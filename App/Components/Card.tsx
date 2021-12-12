@@ -1,17 +1,21 @@
 import React from 'react'
-import { View, Text, StyleSheet} from 'react-native'
+import { View, Text, StyleSheet, TouchableWithoutFeedback} from 'react-native'
 import { Feather } from '@expo/vector-icons'
 
-export default function Card({title, click}){
+export default function Card({title, click, onPress}){
     return(
+        <TouchableWithoutFeedback onPress={onPress}>
         <View style={styles.container}>
             <Text style={ click ? styles.textClick : styles.text }>{title}</Text>
+
             <Feather 
-            name={ click ? 'check-circle' : 'circle'}
-            size={24}
-            color={ click ? 'green' : 'grey'}
+                name={ click ? 'check-circle' : 'circle'}
+                size={24}
+                color={ click ? 'green' : 'grey'}
             />
+            
         </View>
+        </TouchableWithoutFeedback>
     )
 }
 

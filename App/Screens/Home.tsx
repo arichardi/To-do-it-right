@@ -1,11 +1,15 @@
-import React from 'react'
-import { View, Text, StyleSheet, Button, FlatList, TextInput } from 'react-native'
+import React, {useState} from 'react'
+import { View, StyleSheet, FlatList, TextInput } from 'react-native'
 import { StatusBar } from 'expo-status-bar'
 import Card from '../Components/Card'
 import TimeComp from '../Components/TimeComp'
 import ButtonApp from '../Components/ButtonApp'
 
-
+interface DataList{
+    id: string,
+    data: string,
+    click: boolean
+}
 
 export default function Home(){
 
@@ -16,8 +20,32 @@ export default function Home(){
         {id: '4', data: "trem", click: false}
     ]
 
+    const [list, setList] = useState<DataList[]>(data)
+    const [input, setInput] = useState('')
+
     function handleAdd(){
-        console.log('working')
+        const newId = Number(list[list.length -1].id) + 1
+        const newData: DataList = {
+            id: String(newId),
+            data: input,
+            click: false
+        };
+        const newList: DataList[] = [ ... list, newData]
+        setList(newList)
+        setInput('')
+    }
+
+    function handleCleanAll(){
+        const fullList = [... list]
+        const newList = fullList.filter( item => item.click === false)
+        setList(newList)
+
+    }
+
+    function handleItemCheck(id: number){
+        let newList = [... list]
+        newList[id].click = !newList[id].click
+        setList(newList)
     }
 
     return (
@@ -26,23 +54,31 @@ export default function Home(){
             <TimeComp />
             
             <View style={styles.flatList}>    
-            <FlatList 
-                data={data}
-                keyExtractor={item => item.id}
-                renderItem={ ({item}) => (
-                    <Card 
-                    title={item.data}
-                    click={item.click}
-                    />
-                    )}
-                    />
+                <FlatList 
+                    data={list}
+                    keyExtractor={item => item.id}
+                    renderItem={ ({item, index}) => (
+                        <Card 
+                        title={item.data}
+                        click={item.click}
+                        onPress={ () => handleItemCheck(index) }
+                        />
+                        )}
+                        />
             </View>
 
             <View style={styles.buttonAdd}>
                 <View style={styles.form}>
-                    <TextInput />
+                    <TextInput 
+                        onChangeText={ text => setInput(text)}
+                        placeholder='coloque o novo item'
+                        autoCompleteType='off'
+                        autoCorrect={false}
+                        value={input}
+                    />
                 </View>
                 <ButtonApp title={'Add'} onPress={handleAdd}/>
+                <ButtonApp title={'Clean All'} onPress={handleCleanAll}/>
             </View>
 
         </View>
@@ -56,7 +92,7 @@ const styles = StyleSheet.create({
         marginTop: 80,
     },
     buttonAdd: {
-        height: 50,
+        height: 100,
         width: "99.9%",
         marginBottom: 80,
     },
@@ -69,7 +105,7 @@ const styles = StyleSheet.create({
         paddingVertical: 8,
         paddingHorizontal: 16,
         marginBottom: 16,
-        borderWidth: 1,
+        borderWidth: 1.5,
         borderRadius: 10,
         borderColor: 'purple',
 
