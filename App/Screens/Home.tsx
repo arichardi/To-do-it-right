@@ -3,16 +3,17 @@ import { View, Text, StyleSheet, Button, FlatList, TextInput } from 'react-nativ
 import { StatusBar } from 'expo-status-bar'
 import Card from '../Components/Card'
 import TimeComp from '../Components/TimeComp'
+import ButtonApp from '../Components/ButtonApp'
 
 
 
 export default function Home(){
 
     const data = [
-        {id: '1', data: "avião"},
-        {id: '2', data: "carro"},
-        {id: '3', data: "bicicleta"},
-        {id: '4', data: "trem"}
+        {id: '1', data: "avião", click: false},
+        {id: '2', data: "carro", click: false },
+        {id: '3', data: "bicicleta", click: false},
+        {id: '4', data: "trem", click: false}
     ]
 
     function handleAdd(){
@@ -29,7 +30,10 @@ export default function Home(){
                 data={data}
                 keyExtractor={item => item.id}
                 renderItem={ ({item}) => (
-                    <Card title={item.data}/>
+                    <Card 
+                    title={item.data}
+                    click={item.click}
+                    />
                     )}
                     />
             </View>
@@ -38,11 +42,7 @@ export default function Home(){
                 <View style={styles.form}>
                     <TextInput />
                 </View>
-                <Button
-                title='Add'
-                onPress={handleAdd}
-                color={'#640c85'}
-                />
+                <ButtonApp title={'Add'} onPress={handleAdd}/>
             </View>
 
         </View>
@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
     },
     buttonAdd: {
         height: 50,
-        width: "99%",
+        width: "99.9%",
         marginBottom: 80,
     },
     flatList: {
