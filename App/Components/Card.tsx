@@ -2,7 +2,13 @@ import React from 'react'
 import { View, Text, StyleSheet, TouchableWithoutFeedback} from 'react-native'
 import { Feather } from '@expo/vector-icons'
 
-export default function Card({title, click, onPress}){
+interface Props {
+    title: string;
+    click: boolean;
+    onPress: () => void;
+}
+
+export default function Card({title, click, onPress}: Props){
     return(
         <TouchableWithoutFeedback onPress={onPress}>
         <View style={styles.container}>
