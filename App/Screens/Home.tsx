@@ -1,35 +1,37 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import { View, StyleSheet, FlatList, TextInput } from 'react-native'
 import { StatusBar } from 'expo-status-bar'
+import {readItems, createItem} from '../services/Items'
 import Card from '../Components/Card'
 import TimeComp from '../Components/TimeComp'
 import ButtonApp from '../Components/ButtonApp'
 
 interface DataList{
-    id: string,
+    id?: number
     data: string,
     click: boolean
 }
 
 export default function Home(){
 
-    const data = [
-        {id: '1', data: "avião", click: false},
-        {id: '2', data: "carro", click: false },
-        {id: '3', data: "bicicleta", click: false},
-        {id: '4', data: "trem", click: false}
-    ]
-
-    const [list, setList] = useState<DataList[]>(data)
+    const [list, setList] = useState<DataList[]>( {} as DataList[])
     const [input, setInput] = useState('')
 
+    useEffect( () => {
+        
+        const newItemsList = readItems()
+        newItemsList.then( value => setList(value))
+
+    }, [])
+
     function handleAdd(){
-        const newId = Number(list[list.length -1].id) + 1
         const newData: DataList = {
-            id: String(newId),
             data: input,
             click: false
         };
+        createItem(newData)
+        .then( id => console.log(`Item with the id ${id} created`))
+        .catch( err => console.log(err) )
         const newList: DataList[] = [ ... list, newData]
         setList(newList)
         setInput('')
@@ -56,7 +58,7 @@ export default function Home(){
             <View style={styles.flatList}>    
                 <FlatList 
                     data={list}
-                    keyExtractor={item => item.id}
+                    keyExtractor={item => String(item.id)}
                     renderItem={ ({item, index}) => (
                         <Card 
                         title={item.data}
@@ -77,8 +79,8 @@ export default function Home(){
                         value={input}
                     />
                 </View>
-                <ButtonApp title={'Add'} onPress={handleAdd}/>
-                <ButtonApp title={'Clean All'} onPress={handleCleanAll}/>
+                <ButtonApp title={'Adicionar'} onPress={handleAdd}/>
+                <ButtonApp title={'Limpar'} onPress={handleCleanAll}/>
             </View>
 
         </View>

@@ -1,3 +1,5 @@
-export const theme {
-    
+export const theme = {
+    colors: {
+        main: 'purple'
+    }
 }
