@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react'
 import { View, StyleSheet, FlatList, TextInput } from 'react-native'
 import { StatusBar } from 'expo-status-bar'
-import {readItems, createItem} from '../services/Items'
+import {readItems, createItem, deleteItems} from '../services/Items'
 import Card from '../Components/Card'
 import TimeComp from '../Components/TimeComp'
 import ButtonApp from '../Components/ButtonApp'
@@ -9,7 +9,7 @@ import ButtonApp from '../Components/ButtonApp'
 interface DataList{
     id?: number
     data: string,
-    click: boolean
+    click: boolean | number
 }
 
 export default function Home(){
@@ -20,7 +20,13 @@ export default function Home(){
     useEffect( () => {
         
         const newItemsList = readItems()
-        newItemsList.then( value => setList(value))
+        newItemsList.then( value => {
+            let result: DataList[] = value
+            result.forEach( item => 
+            item.click = !!item.click
+                )
+            setList(result)
+        })
 
     }, [])
 
@@ -29,18 +35,17 @@ export default function Home(){
             data: input,
             click: false
         };
-        createItem(newData)
-        .then( id => console.log(`Item with the id ${id} created`))
-        .catch( err => console.log(err) )
-        const newList: DataList[] = [ ... list, newData]
-        setList(newList)
-        setInput('')
+        const newItem = createItem(newData)
+       
+
     }
 
     function handleCleanAll(){
-        const fullList = [... list]
+        console.log(list)
+/*         const fullList = [... list]
         const newList = fullList.filter( item => item.click === false)
-        setList(newList)
+        setList(newList) */
+        deleteItems()
 
     }
 

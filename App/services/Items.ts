@@ -26,21 +26,22 @@ export function createItem(item: itemProp){
             tx.executeSql(
                 "INSERT INTO items (data, click) values (?, ?);",
                 [item.data, Number(item.click)],
-                ( _, { rowsAffected, insertId}) => {
-                    if( rowsAffected > 0 ) resolve(`the row ${insertId} was successfully created`);
-                    else reject("Error inserting obj: " + JSON.stringify(item))
-                },
-                ( _, error) => {
-                    reject(error)
-                    return true
-                }
-
+            //------------------------
+            (sqltx, result) => {
+                console.log(`the line ${result.insertId} was inserted`)
+            },
+            (sqltx, error) => {
+                console.log('An reading error occour' + error)
+                reject('An error on read data accour')
+                return false
+            }
             );
         })
     })
 }
 
 //function which read the data in the table
+//return a promise with the data readed
 
 export function readItems(){
 
@@ -68,4 +69,28 @@ export function readItems(){
     })
     
 
+}
+
+//function that delete the item
+
+export function deleteItems(){
+    return new Promise( (resolve, reject) => {
+        db.transaction( tx => {
+            tx.executeSql(
+            "DELETE FROM items WHERE click=?;",
+            [0],
+            //------------------------
+            ( sqltx, result ) => {
+                console.log('the table with click items was clened')
+                
+            },
+            ( sqltx, error) => {
+                console.log('An eror occour' + error)
+                reject('An error on delete data accour')
+                return false
+                                
+                            }
+            )
+        })
+    })
 }
