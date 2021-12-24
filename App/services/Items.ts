@@ -1,4 +1,3 @@
-import { de } from "date-fns/locale";
 import db from "./SQLiteDB";
 
 interface itemProp {
@@ -63,13 +62,14 @@ export function readItems(){
                     return false
                     
                 }
-                )
+                );
         })
 
     })
     
 
 }
+
 
 //function that delete the item
 
@@ -78,7 +78,7 @@ export function deleteItems(){
         db.transaction( tx => {
             tx.executeSql(
             "DELETE FROM items WHERE click=?;",
-            [0],
+            [1],
             //------------------------
             ( sqltx, result ) => {
                 console.log('the table with click items was clened')
@@ -91,6 +91,28 @@ export function deleteItems(){
                                 
                             }
             )
+        })
+    })
+}
+
+//function that update the click value
+
+export function changeClick(value: boolean, id: number){
+    return new Promise ( (resolve, reject) => {
+        db.transaction( tx => {
+            tx.executeSql(
+                "UPDATE items SET CLICK=? WHERE ID=? ",
+                [value? 1 : 0 , String(id)],
+                //------------------------
+                (sqltx, result) => {
+                    console.log(`The value o ${id} was changed`)
+                },
+                ( sqltx, error) => {
+                    console.log('An eror occour' + error)
+                    reject(`The updated didnt occour on id ${id}`)
+                    return false            
+                },
+            ) 
         })
     })
 }
